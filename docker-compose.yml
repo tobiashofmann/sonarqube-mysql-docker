@@ -1,0 +1,38 @@
+version: "2"
+
+services:
+  sonarqube:
+    image: sonarqube
+    depends_on:
+      - db
+    ports:
+      - "9000:9000"
+    networks:
+      - bridge
+    environment:
+      - SONARQUBE_JDBC_URL=jdbc:mysql://db:3306/sonar?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance&useSSL=false
+      - SONARQUBE_JDBC_USERNAME=sonar
+      - SONARQUBE_JDBC_PASSWORD=sonar
+    volumes:
+      - /opt/sonarqube/conf
+      - /opt/sonarqube/data
+      - /opt/sonarqube/extensions
+
+  db:
+    image: mysql:5.7
+    networks:
+      - bridge
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=sonar
+      - MYSQL_ROOT_PASSWORD=sonar
+      - MYSQL_USER=sonar
+      - MYSQL_PASSWORD=sonar
+    volumes:
+      - /var/lib/mysql
+      - /etc/mysql/conf.d
+
+networks:
+  bridge:
+    driver: bridge
